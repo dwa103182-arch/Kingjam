@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026년도 가람1지구 지적재조사사업 - 동의율 통합 관리 시스템 (단독 실행용)</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --emerald: #059669;
+      --amber: #d97706;
+      --violet: #7c3aed;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+    header { background: #0f172a; color: #fff; padding: 16px 0; border-bottom: 1px solid #1e293b; position: sticky; top: 0; z-index: 20; }
+    .header-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+    .badge-save { display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid transparent; cursor: pointer; transition: 0.15s; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-violet { background: #7c3aed; color: #fff; }
+    .btn-violet:hover { background: #6d28d9; }
+    .btn-dark { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+    .btn-dark:hover { background: #334155; }
+    .btn-outline { background: #fff; color: #334155; border-color: #cbd5e1; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+    .layout-grid { display: grid; grid-template-columns: 1fr 340px; gap: 18px; margin-top: 16px; align-items: start; }
+    @media (max-width: 1024px) { .layout-grid { grid-template-columns: 1fr; } }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .progress-wrap { width: 100%; height: 14px; background: #e2e8f0; border-radius: 999px; overflow: hidden; position: relative; margin: 10px 0; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #2563eb, #4f46e5); transition: width 0.3s; }
+    .progress-bar.met { background: linear-gradient(90deg, #10b981, #059669); }
+    .progress-bar.violet { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+    .target-line { position: absolute; top: 0; bottom: 0; width: 2px; background: #e11d48; z-index: 5; }
+    input, select { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+    th, td { border-bottom: 1px solid #e2e8f0; padding: 9px 8px; text-align: left; }
+    th { background: #f8fafc; font-weight: 700; color: #475569; }
+    .status-select { font-weight: 700; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+    .st-동의 { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+    .st-미동의 { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .st-보류 { background: #e0f2fe; color: #075985; border-color: #7dd3fc; }
+    .st-부동의 { background: #ffe4e6; color: #9f1239; border-color: #fda4af; }
+    .st-거소불명 { background: #f1f5f9; color: #334155; border-color: #cbd5e1; }
+    .banner { margin-top: 16px; padding: 14px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .banner-met { background: #064e3b; color: #fff; }
+    .banner-wait { background: #fffbeb; color: #78350f; border: 1px solid #fcd34d; }
+    .side-panel { background: #fff; border: 2px solid #ddd6fe; border-radius: 16px; padding: 16px; position: sticky; top: 82px; }
+    @media print { .no-print { display: none !important; } .layout-grid { grid-template-columns: 1fr; } body { background: #fff; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="background:#2563eb;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;">단독 실행 모드</span>
+          <h1 id="projTitle" style="font-size:18px;font-weight:800;"></h1>
+          <span class="badge-save"><span class="dot"></span> <span id="saveIndicator">브라우저 자동 저장 켜짐</span></span>
+        </div>
+        <div id="projMeta" style="font-size:12px;color:#94a3b8;margin-top:4px;"></div>
+      </div>
+      <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="document.getElementById('addFormBox').style.display='block'">+ 신규 필지 추가</button>
+        <button class="btn btn-dark" onclick="saveState()">수동 즉시 저장</button>
+        <button class="btn btn-dark" onclick="exportCSV()">엑셀(CSV) 다운로드</button>
+        <button class="btn btn-dark" onclick="window.print()">보고서 인쇄</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="masterBanner" class="banner"></div>
+
+    <div class="layout-grid">
+      <div>
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong style="font-size:14px;">1. 전체 소유자 수 동의율 (기준: 2/3 이상)</strong>
+              <span id="ownerBadge" style="font-size:12px;font-weight:700;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;">
+              <span id="ownerRate" style="font-size:30px;font-weight:800;">0.00%</span>
+              <span id="ownerCountText" style="font-size:13px;font-weight:700;color:#2563eb;"></span>
+            </div>
+            <div class="progress-wrap">
+              <div id="ownerBar" class="progress-bar" style="width:0%"></div>
+              <div class="target-line" style="left:66.67%"></div>
+            </div>
+            <div id="ownerSubText" style="font-size:12px;color:#64748b;"></div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong style="font-size:14px;">2. 토지면적(㎡) 동의율 (기준: 2/3 이상)</strong>
+              <span id="areaBadge" style="font-size:12px;font-weight:700;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;">
+              <span id="areaRate" style="font-size:30px;font-weight:800;">0.00%</span>
+              <span id="areaCountText" style="font-size:13px;font-weight:700;color:#4f46e5;"></span>
+            </div>
+            <div class="progress-wrap">
+              <div id="areaBar" class="progress-bar" style="width:0%"></div>
+              <div class="target-line" style="left:66.67%"></div>
+            </div>
+            <div id="areaSubText" style="font-size:12px;color:#64748b;"></div>
+          </div>
+        </div>
+
+        <div id="addFormBox" class="card no-print" style="margin-top:14px;display:none;background:#f8fafc;">
+          <h3 style="font-size:13px;font-weight:800;margin-bottom:10px;">신규 필지 등록</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <input id="newJibun" placeholder="지번 (예: 425-1)" style="width:110px;" />
+            <select id="newJimok"><option>대</option><option>전</option><option>답</option><option>임야</option><option>잡종지</option><option>도로</option></select>
+            <input id="newArea" type="number" step="0.1" placeholder="면적(㎡)" style="width:100px;" />
+            <select id="newOwnerType"><option>사유지</option><option>국유지</option><option>공유지</option></select>
+            <input id="newOwnerName" placeholder="소유자명" style="width:100px;" />
+            <input id="newPhone" placeholder="연락처" style="width:120px;" />
+            <select id="newStatus"><option>동의</option><option selected>미동의</option><option>보류</option><option>부동의</option><option>거소불명</option></select>
+            <input id="newNote" placeholder="비고" style="flex:1;min-width:120px;" />
+            <button class="btn btn-primary" onclick="saveNewParcel()">저장</button>
+            <button class="btn btn-outline" onclick="document.getElementById('addFormBox').style.display='none'">닫기</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <input id="searchInput" placeholder="지번, 소유자명, 연락처 검색..." oninput="render()" style="width:240px;" />
+            <div id="tableSummary" style="font-size:12px;font-weight:700;color:#475569;"></div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>지번</th>
+                  <th>지목</th>
+                  <th style="text-align:right;">면적(㎡)</th>
+                  <th>소유구분</th>
+                  <th>소유자명</th>
+                  <th>사업동의(2/3)</th>
+                  <th>협의회동의(1/2)</th>
+                  <th>접수일자</th>
+                  <th>비고</th>
+                </tr>
+              </thead>
+              <tbody id="parcelTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사이드 메뉴: 토지소유자협의회 구성 동의서 (1/2 이상) -->
+      <aside class="side-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="background:#ede9fe;color:#5b21b6;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">사이드 메뉴 · 1/2 요건</span>
+          <span id="councilStatusBadge" style="font-size:11px;font-weight:800;"></span>
+        </div>
+        <h3 style="font-size:15px;font-weight:800;margin-top:8px;color:#1e1b4b;">토지소유자협의회 구성 동의서</h3>
+        <p style="font-size:11px;color:#64748b;margin-top:2px;">전체 소유자 1/2(50%) 이상 동의 시 구성 가능</p>
+
+        <div style="margin-top:14px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="font-size:12px;font-weight:700;color:#4c1d95;">소유자 동의율 (1/2 기준)</span>
+            <strong id="councilOwnerRate" style="font-size:24px;font-weight:800;color:#5b21b6;">0.00%</strong>
+          </div>
+          <div class="progress-wrap" style="margin:8px 0;">
+            <div id="councilOwnerBar" class="progress-bar violet" style="width:0%"></div>
+            <div class="target-line" style="left:50%"></div>
+          </div>
+          <div id="councilOwnerSub" style="font-size:11px;color:#4c1d95;font-weight:600;"></div>
+        </div>
+
+        <div style="margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;">
+            <span>협의회 동의 면적 비율</span>
+            <span id="councilAreaRate">0.00%</span>
+          </div>
+          <div id="councilAreaSub" style="font-size:11px;color:#64748b;margin-top:3px;"></div>
+        </div>
+
+        <button class="btn btn-violet no-print" style="width:100%;justify-content:center;margin-top:12px;" onclick="syncCouncilFromMain()">
+          사업 동의자 일괄 협의회 동의 반영
+        </button>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const INITIAL_DATA = {"projectInfo":{"title":"2026년도 가람1지구 지적재조사사업","district":"부산광역시 강서구 대저1동 412번지 일원","department":"토지정보과 지적재조사팀","baseDate":"2026-10-30"},"calcConfig":{"presetId":"2/3","customPct":66.67,"deduplicateOwners":true,"excludePublicLand":true,"syncSameOwnerStatus":true,"autoSyncCouncilWithMain":true},"parcels":[{"id":"P-001","jibun":"412-1","jimok":"대","area":330.5,"ownerType":"사유지","ownerName":"김철수","phone":"010-2345-6789","status":"동의","councilConsent":true,"submitDate":"2026-10-05","submitMethod":"방문","note":"김철수 다필지 소유(3필지), 지구계 인접 주거지"},{"id":"P-002","jibun":"412-2","jimok":"전","area":615,"ownerType":"사유지","ownerName":"김철수","phone":"010-2345-6789","status":"동의","councilConsent":true,"submitDate":"2026-10-05","submitMethod":"방문","note":"김철수 다필지 소유(3필지)"},{"id":"P-003","jibun":"412-3","jimok":"답","area":890.2,"ownerType":"사유지","ownerName":"김철수","phone":"010-2345-6789","status":"동의","councilConsent":true,"submitDate":"2026-10-05","submitMethod":"방문","note":"김철수 다필지 소유(3필지)"},{"id":"P-004","jibun":"413","jimok":"대","area":265,"ownerType":"사유지","ownerName":"이영희","phone":"010-9876-5432","status":"동의","councilConsent":true,"submitDate":"2026-10-08","submitMethod":"우편","note":"이영희 다필지 소유(2필지)"},{"id":"P-005","jibun":"413-1","jimok":"전","area":540.8,"ownerType":"사유지","ownerName":"이영희","phone":"010-9876-5432","status":"동의","councilConsent":true,"submitDate":"2026-10-08","submitMethod":"우편","note":"이영희 다필지 소유(2필지)"},{"id":"P-006","jibun":"414-1","jimok":"답","area":1250,"ownerType":"사유지","ownerName":"박민준","phone":"010-3456-7890","status":"미동의","councilConsent":false,"submitDate":"","submitMethod":"미접수","note":"박민준 다필지(2필지), 경계조정 면적 증감 문의중"},{"id":"P-007","jibun":"414-2","jimok":"대","area":310.4,"ownerType":"사유지","ownerName":"박민준","phone":"010-3456-7890","status":"미동의","councilConsent":false,"submitDate":"","submitMethod":"미접수","note":"박민준 다필지(2필지), 11월 초 방문면담 예정"},{"id":"P-008","jibun":"415","jimok":"대","area":412,"ownerType":"사유지","ownerName":"정수진","phone":"010-4567-8901","status":"동의","councilConsent":true,"submitDate":"2026-10-12","submitMethod":"전자/온라인","note":"모바일 전자서명 완료"},{"id":"P-009","jibun":"416-1","jimok":"전","area":780.5,"ownerType":"사유지","ownerName":"최동훈","phone":"010-5678-9012","status":"동의","councilConsent":true,"submitDate":"2026-10-14","submitMethod":"방문","note":"마을 통장님, 협의회 위원장 추대 예정"},{"id":"P-010","jibun":"416-2","jimok":"과수원","area":1120,"ownerType":"사유지","ownerName":"강미란","phone":"010-6789-0123","status":"동의","councilConsent":true,"submitDate":"2026-10-15","submitMethod":"우편","note":"서울 거주(관외 소유자), 등기우편 접수 완료"},{"id":"P-011","jibun":"417","jimok":"대","area":198.6,"ownerType":"사유지","ownerName":"조현우","phone":"010-7890-1234","status":"부동의","councilConsent":false,"submitDate":"2026-10-18","submitMethod":"방문","note":"현황 담장 경계 유지 희망으로 반대 의사 표명"},{"id":"P-012","jibun":"418","jimok":"답","area":1420,"ownerType":"사유지","ownerName":"윤서연","phone":"010-8901-2345","status":"동의","councilConsent":true,"submitDate":"2026-10-19","submitMethod":"방문","note":"맹지 해소 기대감으로 적극 동의"},{"id":"P-013","jibun":"419-1","jimok":"잡종지","area":640,"ownerType":"사유지","ownerName":"장기용","phone":"010-9012-3456","status":"미동의","councilConsent":true,"submitDate":"","submitMethod":"미접수","note":"협의회 구성은 선동의 완료, 본 사업동의서는 검토중"},{"id":"P-014","jibun":"419-2","jimok":"창고용지","area":495,"ownerType":"사유지","ownerName":"한지민","phone":"010-1122-3344","status":"동의","councilConsent":false,"submitDate":"2026-10-21","submitMethod":"전자/온라인","note":"사업동의서만 우선 제출(협의회 동의서 추가 징구 예정)"},{"id":"P-015","jibun":"420","jimok":"대","area":288,"ownerType":"사유지","ownerName":"오세훈","phone":"010-2233-4455","status":"동의","councilConsent":true,"submitDate":"2026-10-22","submitMethod":"방문","note":"단독주택 부지"},{"id":"P-016","jibun":"421","jimok":"전","area":830,"ownerType":"사유지","ownerName":"신예은","phone":"010-3344-5566","status":"동의","councilConsent":true,"submitDate":"2026-10-25","submitMethod":"우편","note":"공유지분 대표소유자 선임동의서 함께 징구"},{"id":"P-017","jibun":"산14-1","jimok":"임야","area":1650,"ownerType":"사유지","ownerName":"배성우","phone":"010-4455-6677","status":"미동의","councilConsent":false,"submitDate":"","submitMethod":"미접수","note":"대면적 필지 - 가족 회의 후 주말까지 회신 예정"},{"id":"P-018","jibun":"산14-2","jimok":"임야","area":920,"ownerType":"사유지","ownerName":"류승룡","phone":"연락처미상","status":"거소불명","councilConsent":false,"submitDate":"","submitMethod":"미접수","note":"등기부상 주소 반송(2회), 상속인 소재 파악중"},{"id":"P-019","jibun":"422-1","jimok":"도로","area":750,"ownerType":"국유지","ownerName":"국(국토교통부)","phone":"051-970-0000","status":"동의","councilConsent":true,"submitDate":"2026-10-02","submitMethod":"방문","note":"국유지 관리청 협의 완료 (산정시 기본 제외)"},{"id":"P-020","jibun":"423","jimok":"구거","area":480,"ownerType":"공유지","ownerName":"부산광역시 강서구","phone":"051-970-4000","status":"동의","councilConsent":true,"submitDate":"2026-10-02","submitMethod":"방문","note":"지자체 공유재산 관리부서 협의 완료"}],"exportedAt":"2026-10-30T05:15:30.858Z"};
+    const STORAGE_KEY = 'standalone_consent_system_v2';
+
+    let state = (function() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return INITIAL_DATA;
+    })();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        const t = new Date().toTimeString().split(' ')[0];
+        document.getElementById('saveIndicator').textContent = '자동 저장 완료 (' + t + ')';
+      } catch (e) {}
+    }
+
+    function changeStatus(id, newStatus) {
+      const target = state.parcels.find(p => p.id === id);
+      if (!target) return;
+      const today = new Date().toISOString().slice(0, 10);
+      state.parcels.forEach(p => {
+        if (p.id === id || (p.ownerName.trim() === target.ownerName.trim() && p.ownerType === '사유지')) {
+          p.status = newStatus;
+          if (newStatus === '동의') {
+            if (!p.submitDate) p.submitDate = today;
+            if (state.calcConfig.autoSyncCouncilWithMain) p.councilConsent = true;
+          }
+          if (newStatus === '미동의') p.submitDate = '';
+        }
+      });
+      saveState();
+      render();
+    }
+
+    function toggleCouncil(id) {
+      const target = state.parcels.find(p => p.id === id);
+      if (!target) return;
+      const nextVal = !target.councilConsent;
+      state.parcels.forEach(p => {
+        if (p.id === id || (p.ownerName.trim() === target.ownerName.trim() && p.ownerType === '사유지')) {
+          p.councilConsent = nextVal;
+        }
+      });
+      saveState();
+      render();
+    }
+
+    function syncCouncilFromMain() {
+      state.parcels.forEach(p => {
+        if (p.status === '동의') p.councilConsent = true;
+      });
+      saveState();
+      render();
+    }
+
+    function saveNewParcel() {
+      const jibun = document.getElementById('newJibun').value.trim();
+      const ownerName = document.getElementById('newOwnerName').value.trim();
+      const area = parseFloat(document.getElementById('newArea').value);
+      if (!jibun || !ownerName || isNaN(area) || area <= 0) return;
+      const status = document.getElementById('newStatus').value;
+      state.parcels.push({
+        id: 'P-' + String(state.parcels.length + 1).padStart(3, '0'),
+        jibun,
+        jimok: document.getElementById('newJimok').value,
+        area,
+        ownerType: document.getElementById('newOwnerType').value,
+        ownerName,
+        phone: document.getElementById('newPhone').value.trim(),
+        status,
+        councilConsent: status === '동의',
+        submitDate: status === '동의' ? new Date().toISOString().slice(0, 10) : '',
+        submitMethod: status === '동의' ? '방문' : '미접수',
+        note: document.getElementById('newNote').value.trim()
+      });
+      document.getElementById('addFormBox').style.display = 'none';
+      saveState();
+      render();
+    }
+
+    function exportCSV() {
+      const headers = ['일련번호','지번','지목','면적(㎡)','소유구분','소유자명','연락처','사업동의(2/3)','협의회동의(1/2)','접수일자','접수방법','비고'];
+      const rows = state.parcels.map(p => [p.id, p.jibun, p.jimok, p.area, p.ownerType, p.ownerName, p.phone, p.status, p.councilConsent ? '동의' : '미동의', p.submitDate, p.submitMethod, p.note]);
+      const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(',')).join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = state.projectInfo.title + '_동의율명부.csv';
+      a.click();
+    }
+
+    function render() {
+      document.getElementById('projTitle').textContent = state.projectInfo.title;
+      document.getElementById('projMeta').textContent = '대상구역: ' + state.projectInfo.district + ' | 담당: ' + state.projectInfo.department + ' | 기준일: ' + state.projectInfo.baseDate;
+
+      const eligible = state.parcels.filter(p => state.calcConfig.excludePublicLand ? p.ownerType === '사유지' : true);
+      const totalArea = eligible.reduce((s, p) => s + (Number(p.area) || 0), 0);
+      const agreedArea = eligible.filter(p => p.status === '동의').reduce((s, p) => s + (Number(p.area) || 0), 0);
+      const councilArea = eligible.filter(p => p.councilConsent).reduce((s, p) => s + (Number(p.area) || 0), 0);
+
+      const areaRate = totalArea > 0 ? (agreedArea / totalArea) * 100 : 0;
+      const reqArea = totalArea * (2 / 3);
+      const isAreaMet = totalArea > 0 && agreedArea + 1e-6 >= reqArea;
+
+      const groups = {};
+      eligible.forEach(p => {
+        const k = (p.ownerName || '미상').trim();
+        if (!groups[k]) groups[k] = [];
+        groups[k].push(p);
+      });
+      const names = Object.keys(groups);
+      const totalOwners = names.length;
+      let agreedOwners = 0, councilOwners = 0;
+      names.forEach(n => {
+        const list = groups[n];
+        if (list.filter(x => x.status === '동의').length >= Math.ceil(list.length / 2)) agreedOwners++;
+        if (list.some(x => x.councilConsent)) councilOwners++;
+      });
+
+      const ownerRate = totalOwners > 0 ? (agreedOwners / totalOwners) * 100 : 0;
+      const reqOwners = Math.ceil(totalOwners * (2 / 3) - 1e-9);
+      const isOwnerMet = totalOwners > 0 && agreedOwners >= reqOwners;
+
+      const councilOwnerRate = totalOwners > 0 ? (councilOwners / totalOwners) * 100 : 0;
+      const reqCouncilOwners = Math.ceil(totalOwners * 0.5 - 1e-9);
+      const isCouncilMet = totalOwners > 0 && councilOwners >= reqCouncilOwners;
+
+      document.getElementById('ownerRate').textContent = ownerRate.toFixed(2) + '%';
+      document.getElementById('ownerCountText').textContent = agreedOwners + '명 / 전체 ' + totalOwners + '명';
+      document.getElementById('ownerBadge').textContent = isOwnerMet ? '✓ 2/3 충족' : '2/3까지 +' + Math.max(0, reqOwners - agreedOwners) + '명 필요';
+      document.getElementById('ownerBadge').style.color = isOwnerMet ? '#059669' : '#d97706';
+      document.getElementById('ownerBar').style.width = Math.min(100, ownerRate) + '%';
+      document.getElementById('ownerBar').className = 'progress-bar' + (isOwnerMet ? ' met' : '');
+      document.getElementById('ownerSubText').textContent = '2/3(66.67%) 요건 최소 인원: ' + reqOwners + '명 이상';
+
+      document.getElementById('areaRate').textContent = areaRate.toFixed(2) + '%';
+      document.getElementById('areaCountText').textContent = agreedArea.toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡ / ' + totalArea.toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡';
+      document.getElementById('areaBadge').textContent = isAreaMet ? '✓ 2/3 충족' : '2/3까지 +' + Math.max(0, reqArea - agreedArea).toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡ 필요';
+      document.getElementById('areaBadge').style.color = isAreaMet ? '#059669' : '#d97706';
+      document.getElementById('areaBar').style.width = Math.min(100, areaRate) + '%';
+      document.getElementById('areaBar').className = 'progress-bar' + (isAreaMet ? ' met' : '');
+      document.getElementById('areaSubText').textContent = '2/3(66.67%) 요건 최소 면적: ' + reqArea.toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡ 이상';
+
+      document.getElementById('councilOwnerRate').textContent = councilOwnerRate.toFixed(2) + '%';
+      document.getElementById('councilOwnerBar').style.width = Math.min(100, councilOwnerRate) + '%';
+      document.getElementById('councilStatusBadge').textContent = isCouncilMet ? '✓ 구성 가능 (1/2 달성)' : '미달 (+' + Math.max(0, reqCouncilOwners - councilOwners) + '명 필요)';
+      document.getElementById('councilStatusBadge').style.color = isCouncilMet ? '#059669' : '#d97706';
+      document.getElementById('councilOwnerSub').textContent = '동의 ' + councilOwners + '명 / 전체 ' + totalOwners + '명 (1/2 기준: ' + reqCouncilOwners + '명 이상)';
+      document.getElementById('councilAreaRate').textContent = (totalArea > 0 ? (councilArea / totalArea) * 100 : 0).toFixed(2) + '%';
+      document.getElementById('councilAreaSub').textContent = councilArea.toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡ / ' + totalArea.toLocaleString('ko-KR',{maximumFractionDigits:1}) + '㎡';
+
+      const banner = document.getElementById('masterBanner');
+      if (isOwnerMet && isAreaMet) {
+        banner.className = 'banner banner-met';
+        banner.innerHTML = '<span>✓ [사업지구 지정 요건 최종 충족] 소유자 2/3 이상(' + ownerRate.toFixed(1) + '%) & 토지면적 2/3 이상(' + areaRate.toFixed(1) + '%) 동시 달성!</span><span>토지소유자협의회(1/2): ' + (isCouncilMet ? '구성 가능' : '진행중') + '</span>';
+      } else {
+        banner.className = 'banner banner-wait';
+        banner.innerHTML = '<span>[사업 동의 진행중] 소유자 수 2/3(' + (isOwnerMet ? '충족' : '미달') + ') + 면적 2/3(' + (isAreaMet ? '충족' : '미달') + ') 동시 충족 필요</span><span>토지소유자협의회(1/2): ' + (isCouncilMet ? '✓ 구성 가능' : '미달') + '</span>';
+      }
+
+      const q = (document.getElementById('searchInput').value || '').toLowerCase();
+      const filtered = state.parcels.filter(p => !q || p.jibun.toLowerCase().includes(q) || p.ownerName.toLowerCase().includes(q));
+      document.getElementById('tableSummary').textContent = '조회 필지: ' + filtered.length + '건';
+      document.getElementById('parcelTbody').innerHTML = filtered.map(p => {
+        const opts = ['동의','미동의','보류','부동의','거소불명'].map(st => '<option value="'+st+'" '+(p.status===st?'selected':'')+'>'+st+'</option>').join('');
+        return '<tr>' +
+          '<td>' + p.id + '</td>' +
+          '<td><strong>' + p.jibun + '</strong></td>' +
+          '<td>' + p.jimok + '</td>' +
+          '<td style="text-align:right;font-weight:700;">' + Number(p.area).toLocaleString('ko-KR',{minimumFractionDigits:1}) + '</td>' +
+          '<td>' + p.ownerType + '</td>' +
+          '<td><strong>' + p.ownerName + '</strong></td>' +
+          '<td><select class="status-select st-' + p.status + '" onchange="changeStatus(\'' + p.id + '\', this.value)">' + opts + '</select></td>' +
+          '<td><button class="btn ' + (p.councilConsent ? 'btn-violet' : 'btn-outline') + '" style="padding:4px 9px;font-size:11px;" onclick="toggleCouncil(\'' + p.id + '\')">' + (p.councilConsent ? '✓ 제출완료' : '미제출') + '</button></td>' +
+          '<td>' + (p.submitDate || '-') + '</td>' +
+          '<td>' + (p.note || '-') + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    render();
+  </script>
+</body>
+</html>
